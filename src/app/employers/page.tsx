@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { CheckCircle2, Send, Building2, Users, Clock, ShieldCheck } from "lucide-react";
+import { submitContactMessage } from "@/app/contact/actions";
 
 export default function EmployersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -16,23 +17,39 @@ export default function EmployersPage() {
     const form = e.currentTarget;
     const formData = new FormData(form);
     
-    // Web3Forms integration
-    formData.append("access_key", process.env.NEXT_PUBLIC_WEB3FORMS_KEY || "[ADD: WEB3FORMS_KEY]");
-    formData.append("subject", "New Talent Request - Employer Dashboard");
+    // Convert employer specific fields into a readable message body
+    const company = formData.get("company") as string;
+    const contactPerson = formData.get("contact_person") as string;
+    const jobRole = formData.get("job_role") as string;
+    const vacancies = formData.get("vacancies") as string;
+    const location = formData.get("location") as string;
+    const description = formData.get("description") as string;
+
+    const messageBody = `
+Company: ${company}
+Contact Person: ${contactPerson}
+Job Role: ${jobRole}
+Vacancies: ${vacancies}
+Location: ${location}
+
+Description:
+${description}
+    `.trim();
 
     try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        body: formData,
+      const response = await submitContactMessage({
+        name: contactPerson,
+        email: formData.get("email") as string,
+        phone: formData.get("phone") as string,
+        subject: `Talent Request for ${company}`,
+        message: messageBody,
       });
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (response.success) {
         setIsSuccess(true);
         form.reset();
       } else {
-        setError(data.message || "Something went wrong. Please try again.");
+        setError(response.error || "Something went wrong. Please try again.");
       }
     } catch (err) {
       setError("Failed to send request. Please check your connection and try again.");
@@ -57,6 +74,7 @@ export default function EmployersPage() {
             src="https://images.unsplash.com/photo-1556761175-5973dc0f32d7?q=80&w=1932&auto=format&fit=crop" 
             alt="Corporate Environment" 
             fill
+            sizes="100vw"
             className="object-cover opacity-20"
           />
         </div>

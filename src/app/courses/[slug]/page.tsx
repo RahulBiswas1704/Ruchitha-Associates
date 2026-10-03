@@ -44,6 +44,7 @@ export default function CourseDetailPage({ params }: { params: { slug: string } 
                 src={course.image} 
                 alt={course.title} 
                 fill
+                sizes="(max-width: 1024px) 100vw, 40vw"
                 className="object-cover"
                 priority
               />

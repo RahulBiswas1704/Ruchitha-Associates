@@ -48,6 +48,7 @@ export default function NewsArticlePage({ params }: { params: { slug: string } }
               src={news.image} 
               alt={news.title} 
               fill
+              sizes="100vw"
               className="object-cover"
               priority
             />
