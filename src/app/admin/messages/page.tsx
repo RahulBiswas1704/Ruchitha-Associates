@@ -2,31 +2,14 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { MessageSquare, Mail, Phone, Trash2, CheckCircle, Clock } from "lucide-react";
 
+import { markAsRead, deleteMessage } from "@/lib/actions";
+
 export const dynamic = "force-dynamic";
 
 export default async function AdminMessagesPage() {
   const messages = await prisma.contactMessage.findMany({
     orderBy: { createdAt: 'desc' }
   });
-
-  async function markAsRead(formData: FormData) {
-    "use server";
-    const id = formData.get("id") as string;
-    await prisma.contactMessage.update({
-      where: { id },
-      data: { isRead: true }
-    });
-    revalidatePath("/admin/messages");
-    revalidatePath("/admin");
-  }
-
-  async function deleteMessage(formData: FormData) {
-    "use server";
-    const id = formData.get("id") as string;
-    await prisma.contactMessage.delete({ where: { id } });
-    revalidatePath("/admin/messages");
-    revalidatePath("/admin");
-  }
 
   return (
     <div className="space-y-8">

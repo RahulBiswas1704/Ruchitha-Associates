@@ -4,8 +4,7 @@ import { Layers, Trash2, Plus, Link as LinkIcon, AlertCircle } from "lucide-reac
 import Link from "next/link";
 import RichTextEditor from "@/components/RichTextEditor";
 
-import { Files } from "files-sdk";
-import { neon } from "files-sdk/neon";
+import { addService, deleteService } from "@/lib/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -13,52 +12,6 @@ export default async function AdminServicesPage() {
   const services = await prisma.service.findMany({
     orderBy: { createdAt: 'desc' }
   });
-
-  async function addService(formData: FormData) {
-    "use server";
-    
-    let fileUrl = "";
-    const file = formData.get("file") as File;
-    
-    if (file && file.size > 0) {
-      try {
-        const files = new Files({ adapter: neon({ bucket: "images" }) });
-        const uniqueFilename = `${Date.now()}-${file.name}`;
-        await files.upload(uniqueFilename, file, { contentType: file.type });
-        fileUrl = `${process.env.AWS_ENDPOINT_URL_S3}/images/${uniqueFilename}`;
-      } catch (error) {
-        console.error("Neon Storage upload failed:", error);
-      }
-    }
-    
-    if (!fileUrl) {
-      fileUrl = formData.get("imageUrl") as string;
-    }
-
-    await prisma.service.create({
-      data: {
-        title: formData.get("title") as string,
-        description: formData.get("description") as string,
-        iconName: (formData.get("iconName") as string) || null,
-        imageUrl: fileUrl || null,
-        features: formData.get("features") as string, // Comma separated
-        link: (formData.get("link") as string) || null,
-      }
-    });
-
-    revalidatePath("/admin/services");
-    revalidatePath("/services");
-  }
-
-  async function deleteService(formData: FormData) {
-    "use server";
-    
-    const id = formData.get("id") as string;
-    await prisma.service.delete({ where: { id } });
-    
-    revalidatePath("/admin/services");
-    revalidatePath("/services");
-  }
 
   return (
     <div className="space-y-8">

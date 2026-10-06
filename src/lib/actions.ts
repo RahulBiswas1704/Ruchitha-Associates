@@ -307,3 +307,153 @@ export async function deleteMember(formData: FormData) {
     console.error("Failed to delete member", error);
   }
 }
+
+// --- SERVICES ---
+export async function addService(formData: FormData) {
+  try {
+    let fileUrl = "";
+    const file = formData.get("file") as File;
+    
+    if (file && file.size > 0) {
+      const files = new Files({ adapter: neon({ bucket: "images" }) });
+      const uniqueFilename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+      await files.upload(uniqueFilename, file, { contentType: file.type });
+      fileUrl = `${process.env.AWS_ENDPOINT_URL_S3}/images/${uniqueFilename}`;
+    }
+    
+    if (!fileUrl) {
+      fileUrl = formData.get("imageUrl") as string;
+    }
+
+    await prisma.service.create({
+      data: {
+        title: formData.get("title") as string,
+        description: formData.get("description") as string,
+        iconName: (formData.get("iconName") as string) || null,
+        imageUrl: fileUrl || null,
+        features: formData.get("features") as string,
+        link: (formData.get("link") as string) || null,
+      }
+    });
+
+    revalidatePath("/admin/services");
+    revalidatePath("/services");
+  } catch (error) {
+    console.error("Failed to add service", error);
+  }
+}
+
+export async function deleteService(formData: FormData) {
+  try {
+    const id = formData.get("id") as string;
+    await prisma.service.delete({ where: { id } });
+    revalidatePath("/admin/services");
+    revalidatePath("/services");
+  } catch (error) {
+    console.error("Failed to delete service", error);
+  }
+}
+
+// --- MESSAGES ---
+export async function markAsRead(formData: FormData) {
+  try {
+    const id = formData.get("id") as string;
+    await prisma.contactMessage.update({
+      where: { id },
+      data: { isRead: true }
+    });
+    revalidatePath("/admin/messages");
+    revalidatePath("/admin");
+  } catch (error) {
+    console.error("Failed to mark message as read", error);
+  }
+}
+
+export async function deleteMessage(formData: FormData) {
+  try {
+    const id = formData.get("id") as string;
+    await prisma.contactMessage.delete({ where: { id } });
+    revalidatePath("/admin/messages");
+    revalidatePath("/admin");
+  } catch (error) {
+    console.error("Failed to delete message", error);
+  }
+}
+
+// --- JOBS ---
+export async function createJob(formData: FormData) {
+  try {
+    await prisma.job.create({
+      data: {
+        title: formData.get("title") as string,
+        company: formData.get("company") as string,
+        location: formData.get("location") as string,
+        type: formData.get("type") as string,
+        category: formData.get("category") as string,
+        salary: formData.get("salary") as string,
+        description: formData.get("description") as string,
+      }
+    });
+    revalidatePath("/admin/jobs");
+    revalidatePath("/jobs");
+    return { success: true };
+  } catch (error: any) {
+    return { error: error.message || "Failed to create job" };
+  }
+}
+
+export async function deleteJob(formData: FormData) {
+  try {
+    const id = formData.get("id") as string;
+    await prisma.job.delete({ where: { id } });
+    revalidatePath("/admin/jobs");
+    revalidatePath("/jobs");
+  } catch (error) {
+    console.error("Failed to delete job", error);
+  }
+}
+
+// --- GALLERY ---
+export async function addImage(formData: FormData) {
+  try {
+    let fileUrl = "";
+    const file = formData.get("file") as File;
+    
+    if (file && file.size > 0) {
+      const files = new Files({ adapter: neon({ bucket: "images" }) });
+      const uniqueFilename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+      await files.upload(uniqueFilename, file, { contentType: file.type });
+      fileUrl = `${process.env.AWS_ENDPOINT_URL_S3}/images/${uniqueFilename}`;
+    }
+    
+    if (!fileUrl) {
+      fileUrl = formData.get("url") as string;
+    }
+
+    if (!fileUrl) return;
+
+    await prisma.galleryImage.create({
+      data: {
+        src: fileUrl,
+        category: formData.get("category") as string,
+        alt: (formData.get("caption") as string) || "Gallery Image",
+      }
+    });
+
+    revalidatePath("/admin/gallery");
+    revalidatePath("/gallery");
+  } catch (error) {
+    console.error("Failed to add image", error);
+  }
+}
+
+export async function deleteImage(formData: FormData) {
+  try {
+    const id = formData.get("id") as string;
+    await prisma.galleryImage.delete({ where: { id } });
+    revalidatePath("/admin/gallery");
+    revalidatePath("/gallery");
+  } catch (error) {
+    console.error("Failed to delete image", error);
+  }
+}

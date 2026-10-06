@@ -6,6 +6,8 @@ import Link from "next/link";
 import ClientForm from "@/components/ClientForm";
 import { SubmitButton } from "@/components/SubmitButton";
 
+import { createJob, deleteJob } from "@/lib/actions";
+
 export const dynamic = "force-dynamic";
 
 export default async function AdminJobsPage({ searchParams }: { searchParams: { page?: string } }) {
@@ -20,35 +22,6 @@ export default async function AdminJobsPage({ searchParams }: { searchParams: { 
     take: ITEMS_PER_PAGE,
     orderBy: { createdAt: 'desc' }
   });
-
-  async function createJob(formData: FormData) {
-    "use server";
-    
-    await prisma.job.create({
-      data: {
-        title: formData.get("title") as string,
-        company: formData.get("company") as string,
-        location: formData.get("location") as string,
-        type: formData.get("type") as string,
-        category: formData.get("category") as string,
-        salary: formData.get("salary") as string,
-        description: formData.get("description") as string,
-      }
-    });
-
-    revalidatePath("/admin/jobs");
-    revalidatePath("/jobs");
-  }
-
-  async function deleteJob(formData: FormData) {
-    "use server";
-    
-    const id = formData.get("id") as string;
-    await prisma.job.delete({ where: { id } });
-    
-    revalidatePath("/admin/jobs");
-    revalidatePath("/jobs");
-  }
 
   return (
     <div className="space-y-8">

@@ -1,8 +1,7 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { Image as ImageIcon, Trash2, Plus, Upload, Link as LinkIcon } from "lucide-react";
-import { Files } from "files-sdk";
-import { neon } from "files-sdk/neon";
+import { addImage, deleteImage } from "@/lib/actions";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -19,54 +18,6 @@ export default async function AdminGalleryPage({ searchParams }: { searchParams:
     take: ITEMS_PER_PAGE,
     orderBy: { createdAt: 'desc' }
   });
-
-  async function addImage(formData: FormData) {
-    "use server";
-    
-    let fileUrl = "";
-    const file = formData.get("file") as File;
-    
-    if (file && file.size > 0) {
-      try {
-        const files = new Files({ adapter: neon({ bucket: "images" }) });
-        const uniqueFilename = `${Date.now()}-${file.name}`;
-        await files.upload(uniqueFilename, file, { contentType: file.type });
-        fileUrl = `${process.env.AWS_ENDPOINT_URL_S3}/images/${uniqueFilename}`;
-      } catch (error) {
-        console.error("Neon Storage upload failed:", error);
-      }
-    }
-    
-    if (!fileUrl) {
-      fileUrl = formData.get("url") as string;
-    }
-
-    if (!fileUrl) return;
-
-    await prisma.galleryImage.create({
-      data: {
-        src: fileUrl,
-        category: formData.get("category") as string,
-        alt: (formData.get("caption") as string) || "Gallery Image",
-      }
-    });
-
-    revalidatePath("/admin/gallery");
-    revalidatePath("/gallery");
-  }
-
-  async function deleteImage(formData: FormData) {
-    "use server";
-    
-    const id = formData.get("id") as string;
-    await prisma.galleryImage.delete({ where: { id } });
-    
-    // Note: We don't delete the physical file here to be safe and simple, 
-    // but in a production app we would `unlink` it from public/uploads.
-    
-    revalidatePath("/admin/gallery");
-    revalidatePath("/gallery");
-  }
 
   return (
     <div className="space-y-8">
