@@ -3,10 +3,11 @@ import { revalidatePath } from "next/cache";
 import { Users, Trash2, Plus, Briefcase, Link as LinkIcon } from "lucide-react";
 import Image from "next/image";
 
-import { Files } from "files-sdk";
-import { neon } from "files-sdk/neon";
+
 import ClientForm from "@/components/ClientForm";
 import { SubmitButton } from "@/components/SubmitButton";
+
+import { addMember, moveMember, deleteMember } from "@/lib/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -17,89 +18,6 @@ export default async function AdminTeamPage() {
       { createdAt: 'desc' }
     ]
   });
-
-  async function addMember(formData: FormData) {
-    "use server";
-    
-    let fileUrl = "";
-    const file = formData.get("file") as File;
-    
-    if (file && file.size > 0) {
-      try {
-        const files = new Files({ adapter: neon({ bucket: "images" }) });
-        const uniqueFilename = `${Date.now()}-${file.name}`;
-        await files.upload(uniqueFilename, file, { contentType: file.type });
-        fileUrl = `${process.env.AWS_ENDPOINT_URL_S3}/images/${uniqueFilename}`;
-      } catch (error) {
-        console.error("Neon Storage upload failed:", error);
-      }
-    }
-    
-    if (!fileUrl) {
-      fileUrl = formData.get("imageUrl") as string;
-    }
-
-    await prisma.associate.create({
-      data: {
-        name: formData.get("name") as string,
-        role: formData.get("role") as string,
-        imageSrc: fileUrl || null,
-        phone: (formData.get("phone") as string) || null,
-        email: (formData.get("email") as string) || null,
-        linkedinUrl: (formData.get("linkedinUrl") as string) || null,
-        otherLink: (formData.get("otherLink") as string) || null,
-      }
-    });
-
-    revalidatePath("/admin/team");
-    revalidatePath("/");
-  }
-
-  async function moveMember(formData: FormData) {
-    "use server";
-    
-    const id = formData.get("id") as string;
-    const direction = formData.get("direction") as "up" | "down";
-
-    const allMembers = await prisma.associate.findMany({
-      orderBy: [{ order: 'asc' }, { createdAt: 'desc' }]
-    });
-
-    const currentIndex = allMembers.findIndex((m: any) => m.id === id);
-    if (currentIndex === -1) return;
-
-    const swapIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1;
-    if (swapIndex < 0 || swapIndex >= allMembers.length) return; // Cannot move
-
-    const currentMember = allMembers[currentIndex];
-    const swapMember = allMembers[swapIndex];
-
-    const updates = [...allMembers];
-    updates[currentIndex] = swapMember;
-    updates[swapIndex] = currentMember;
-
-    await prisma.$transaction(
-      updates.map((member, index) => 
-        prisma.associate.update({
-          where: { id: member.id },
-          data: { order: index }
-        })
-      )
-    );
-
-    revalidatePath("/admin/team");
-    revalidatePath("/");
-  }
-
-  async function deleteMember(formData: FormData) {
-    "use server";
-    
-    const id = formData.get("id") as string;
-    await prisma.associate.delete({ where: { id } });
-    
-    revalidatePath("/admin/team");
-    revalidatePath("/");
-  }
 
   return (
     <div className="space-y-8">

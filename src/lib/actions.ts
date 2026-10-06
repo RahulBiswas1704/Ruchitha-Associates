@@ -221,3 +221,89 @@ export async function deleteTestimonial(id: string) {
     return { error: error.message };
   }
 }
+
+export async function addMember(formData: FormData) {
+  try {
+    let fileUrl = "";
+    const file = formData.get("file") as File;
+    
+    if (file && file.size > 0) {
+      const files = new Files({ adapter: neon({ bucket: "images" }) });
+      const uniqueFilename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+      await files.upload(uniqueFilename, file, { contentType: file.type });
+      fileUrl = `${process.env.AWS_ENDPOINT_URL_S3}/images/${uniqueFilename}`;
+    }
+    
+    if (!fileUrl) {
+      fileUrl = formData.get("imageUrl") as string;
+    }
+
+    await prisma.associate.create({
+      data: {
+        name: formData.get("name") as string,
+        role: formData.get("role") as string,
+        imageSrc: fileUrl || null,
+        phone: (formData.get("phone") as string) || null,
+        email: (formData.get("email") as string) || null,
+        linkedinUrl: (formData.get("linkedinUrl") as string) || null,
+        otherLink: (formData.get("otherLink") as string) || null,
+      }
+    });
+
+    revalidatePath("/admin/team");
+    revalidatePath("/");
+    return { success: true };
+  } catch (error: any) {
+    return { error: error.message || "Failed to add member" };
+  }
+}
+
+export async function moveMember(formData: FormData) {
+  try {
+    const id = formData.get("id") as string;
+    const direction = formData.get("direction") as "up" | "down";
+
+    const allMembers = await prisma.associate.findMany({
+      orderBy: [{ order: 'asc' }, { createdAt: 'desc' }]
+    });
+
+    const currentIndex = allMembers.findIndex((m: any) => m.id === id);
+    if (currentIndex === -1) return;
+
+    const swapIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1;
+    if (swapIndex < 0 || swapIndex >= allMembers.length) return;
+
+    const currentMember = allMembers[currentIndex];
+    const swapMember = allMembers[swapIndex];
+
+    const updates = [...allMembers];
+    updates[currentIndex] = swapMember;
+    updates[swapIndex] = currentMember;
+
+    await prisma.$transaction(
+      updates.map((member, index) => 
+        prisma.associate.update({
+          where: { id: member.id },
+          data: { order: index }
+        })
+      )
+    );
+
+    revalidatePath("/admin/team");
+    revalidatePath("/");
+  } catch (error: any) {
+    console.error("Failed to move member", error);
+  }
+}
+
+export async function deleteMember(formData: FormData) {
+  try {
+    const id = formData.get("id") as string;
+    await prisma.associate.delete({ where: { id } });
+    
+    revalidatePath("/admin/team");
+    revalidatePath("/");
+  } catch (error: any) {
+    console.error("Failed to delete member", error);
+  }
+}
