@@ -211,14 +211,15 @@ export async function addTestimonial(formData: FormData) {
   }
 }
 
-export async function deleteTestimonial(id: string) {
+export async function deleteTestimonial(formData: FormData) {
   try {
+    const id = formData.get("id") as string;
     await prisma.testimonial.delete({ where: { id } });
     revalidatePath("/admin/testimonials");
     revalidatePath("/about");
-    return { success: true };
+    return;
   } catch (error: any) {
-    return { error: error.message };
+    console.error("Failed to delete testimonial", error);
   }
 }
 
