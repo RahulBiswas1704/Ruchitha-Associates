@@ -2,8 +2,23 @@
 
 import prisma from "@/lib/prisma";
 import { Files } from "files-sdk";
-import { neon } from "files-sdk/neon";
+import { s3 } from "files-sdk/s3";
 import { revalidatePath } from "next/cache";
+
+function getFilesAdapter() {
+  return new Files({
+    adapter: s3({
+      bucket: "images",
+      region: process.env.NEON_REGION || "us-east-2",
+      endpoint: process.env.NEON_ENDPOINT_URL_S3,
+      credentials: {
+        accessKeyId: process.env.NEON_ACCESS_KEY_ID || "",
+        secretAccessKey: process.env.NEON_SECRET_ACCESS_KEY || ""
+      },
+      forcePathStyle: true // Needed for some S3 compatible endpoints
+    })
+  });
+}
 import { sendAdminNotification } from "@/lib/email";
 
 export async function trackPageView(path: string, referrer?: string, userAgent?: string, sessionId?: string) {
@@ -50,10 +65,10 @@ export async function applyForJob(formData: FormData) {
     }
 
     // Upload resume
-    const files = new Files({ adapter: neon({ bucket: "images" }) });
+    const files = getFilesAdapter();
     const uniqueFilename = `resume-${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
     await files.upload(uniqueFilename, file, { contentType: file.type });
-    const resumeUrl = `${process.env.AWS_ENDPOINT_URL_S3}/images/${uniqueFilename}`;
+    const resumeUrl = `${process.env.NEON_ENDPOINT_URL_S3}/images/${uniqueFilename}`;
 
     await prisma.jobApplication.create({
       data: {
@@ -229,10 +244,10 @@ export async function addMember(formData: FormData) {
     const file = formData.get("file") as File;
     
     if (file && file.size > 0) {
-      const files = new Files({ adapter: neon({ bucket: "images" }) });
+      const files = getFilesAdapter();
       const uniqueFilename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
       await files.upload(uniqueFilename, file, { contentType: file.type });
-      fileUrl = `${process.env.AWS_ENDPOINT_URL_S3}/images/${uniqueFilename}`;
+      fileUrl = `${process.env.NEON_ENDPOINT_URL_S3}/images/${uniqueFilename}`;
     }
     
     if (!fileUrl) {
@@ -316,10 +331,10 @@ export async function addService(formData: FormData) {
     const file = formData.get("file") as File;
     
     if (file && file.size > 0) {
-      const files = new Files({ adapter: neon({ bucket: "images" }) });
+      const files = getFilesAdapter();
       const uniqueFilename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
       await files.upload(uniqueFilename, file, { contentType: file.type });
-      fileUrl = `${process.env.AWS_ENDPOINT_URL_S3}/images/${uniqueFilename}`;
+      fileUrl = `${process.env.NEON_ENDPOINT_URL_S3}/images/${uniqueFilename}`;
     }
     
     if (!fileUrl) {
@@ -421,10 +436,10 @@ export async function addImage(formData: FormData) {
     const file = formData.get("file") as File;
     
     if (file && file.size > 0) {
-      const files = new Files({ adapter: neon({ bucket: "images" }) });
+      const files = getFilesAdapter();
       const uniqueFilename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
       await files.upload(uniqueFilename, file, { contentType: file.type });
-      fileUrl = `${process.env.AWS_ENDPOINT_URL_S3}/images/${uniqueFilename}`;
+      fileUrl = `${process.env.NEON_ENDPOINT_URL_S3}/images/${uniqueFilename}`;
     }
     
     if (!fileUrl) {

@@ -9,25 +9,9 @@ import { addService, deleteService } from "@/lib/actions";
 export const dynamic = "force-dynamic";
 
 export default async function AdminServicesPage() {
-  let services: any[] = [];
-  let dbError = "";
-  
-  try {
-    services = await prisma.service.findMany({
-      orderBy: { createdAt: 'desc' }
-    });
-  } catch (error: any) {
-    dbError = error.message || String(error);
-  }
-
-  if (dbError) {
-    return (
-      <div className="p-8 bg-red-50 text-red-600 rounded-xl">
-        <h2 className="text-xl font-bold mb-4">Database Error</h2>
-        <pre className="whitespace-pre-wrap text-sm">{dbError}</pre>
-      </div>
-    );
-  }
+  const services = await prisma.service.findMany({
+    orderBy: { createdAt: 'desc' }
+  });
 
   return (
     <div className="space-y-8">
