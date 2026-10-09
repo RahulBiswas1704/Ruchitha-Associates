@@ -3,6 +3,8 @@ import { revalidatePath } from "next/cache";
 import { Image as ImageIcon, Trash2, Plus, Upload, Link as LinkIcon } from "lucide-react";
 import { addImage, deleteImage } from "@/lib/actions";
 import Link from "next/link";
+import ClientForm from "@/components/ClientForm";
+import { SubmitButton } from "@/components/SubmitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -58,12 +60,12 @@ export default async function AdminGalleryPage(props: { searchParams: Promise<{ 
                           </span>
                           <p className="text-white font-medium text-sm line-clamp-1">{img.alt}</p>
                         </div>
-                        <form action={deleteImage}>
+                        <ClientForm action={deleteImage} successMessage="Image Deleted!">
                           <input type="hidden" name="id" value={img.id} />
                           <button type="submit" className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-lg" title="Delete Image">
                             <Trash2 size={16} />
                           </button>
-                        </form>
+                        </ClientForm>
                       </div>
                     </div>
                   </div>
@@ -102,7 +104,7 @@ export default async function AdminGalleryPage(props: { searchParams: Promise<{ 
               Upload Image
             </h3>
             
-            <form action={addImage} className="space-y-6">
+            <ClientForm action={addImage} successMessage="Image Added!" className="space-y-6">
               
               <div className="p-4 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors text-center cursor-pointer relative overflow-hidden group">
                 <input type="file" name="file" accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
@@ -148,10 +150,10 @@ export default async function AdminGalleryPage(props: { searchParams: Promise<{ 
                 <input type="text" name="caption" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue" placeholder="e.g. Mega Job Mela 2024" />
               </div>
               
-              <button type="submit" className="w-full py-4 bg-brand-blue text-white font-bold rounded-xl hover:bg-blue-700 transition-colors mt-4 shadow-lg shadow-blue-500/20">
+              <SubmitButton className="w-full">
                 Publish to Gallery
-              </button>
-            </form>
+              </SubmitButton>
+            </ClientForm>
           </div>
         </div>
 

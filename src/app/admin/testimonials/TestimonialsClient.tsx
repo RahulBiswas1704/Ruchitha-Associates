@@ -70,12 +70,12 @@ export default function TestimonialsClient({ testimonials, deleteAction }: { tes
                           >
                             <Edit size={18} />
                           </button>
-                          <form action={deleteAction}>
+                          <ClientForm action={deleteAction} successMessage="Testimonial Deleted!">
                             <input type="hidden" name="id" value={testimonial.id} />
                             <button type="submit" className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all shrink-0" title="Delete Testimonial">
                               <Trash2 size={18} />
                             </button>
-                          </form>
+                          </ClientForm>
                         </div>
                       </div>
                       <p className="text-slate-600 dark:text-slate-400 italic">"{testimonial.content}"</p>

@@ -3,8 +3,9 @@ import { revalidatePath } from "next/cache";
 import { Layers, Trash2, Plus, Link as LinkIcon, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import RichTextEditor from "@/components/RichTextEditor";
-
 import { addService, deleteService } from "@/lib/actions";
+import ClientForm from "@/components/ClientForm";
+import { SubmitButton } from "@/components/SubmitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -48,12 +49,12 @@ export default async function AdminServicesPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-4 mb-2">
                         <h4 className="font-bold text-lg text-slate-900 dark:text-white truncate">{service.title}</h4>
-                        <form action={deleteService}>
+                        <ClientForm action={deleteService} successMessage="Service Deleted!">
                           <input type="hidden" name="id" value={service.id} />
                           <button type="submit" className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all shrink-0" title="Delete Service">
                             <Trash2 size={18} />
                           </button>
-                        </form>
+                        </ClientForm>
                       </div>
                       <div className="text-sm text-slate-500 line-clamp-2 mb-4 prose prose-sm dark:prose-invert" dangerouslySetInnerHTML={{ __html: service.description }} />
                       
@@ -81,7 +82,7 @@ export default async function AdminServicesPage() {
               Add Service
             </h3>
             
-            <form action={addService} className="space-y-4">
+            <ClientForm action={addService} successMessage="Service Added!" className="space-y-4">
               <div>
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Service Title</label>
                 <input type="text" name="title" required className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue" placeholder="e.g. Skill Development" />
@@ -136,10 +137,10 @@ export default async function AdminServicesPage() {
                 </div>
               </div>
               
-              <button type="submit" className="w-full py-4 bg-brand-blue text-white font-bold rounded-xl hover:bg-blue-700 transition-colors mt-4 shadow-lg shadow-blue-500/20">
+              <SubmitButton className="w-full">
                 Create Service
-              </button>
-            </form>
+              </SubmitButton>
+            </ClientForm>
           </div>
         </div>
 

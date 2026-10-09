@@ -3,6 +3,8 @@ import { revalidatePath } from "next/cache";
 import { Building2, Trash2, Plus, Edit, ArrowUp, ArrowDown } from "lucide-react";
 import Link from "next/link";
 import { addPartner, deletePartner, updatePartnerOrder } from "@/lib/actions";
+import ClientForm from "@/components/ClientForm";
+import { SubmitButton } from "@/components/SubmitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -52,25 +54,25 @@ export default async function AdminPartnersPage() {
                           {partner.domain && <p className="text-sm text-slate-500">{partner.domain}</p>}
                         </div>
                         <div className="flex flex-wrap gap-2">
-                          <form action={updatePartnerOrder.bind(null, partner.id, "up")}>
+                          <ClientForm action={updatePartnerOrder.bind(null, partner.id, "up")} successMessage="Moved Up" resetOnSuccess={false}>
                             <button type="submit" disabled={index === 0} className="p-2 text-slate-400 hover:text-brand-blue hover:bg-blue-50 dark:hover:bg-blue-900/20 disabled:opacity-30 disabled:hover:bg-transparent rounded-xl transition-all" title="Move Up">
                               <ArrowUp size={18} />
                             </button>
-                          </form>
-                          <form action={updatePartnerOrder.bind(null, partner.id, "down")}>
+                          </ClientForm>
+                          <ClientForm action={updatePartnerOrder.bind(null, partner.id, "down")} successMessage="Moved Down" resetOnSuccess={false}>
                             <button type="submit" disabled={index === partners.length - 1} className="p-2 text-slate-400 hover:text-brand-blue hover:bg-blue-50 dark:hover:bg-blue-900/20 disabled:opacity-30 disabled:hover:bg-transparent rounded-xl transition-all" title="Move Down">
                               <ArrowDown size={18} />
                             </button>
-                          </form>
+                          </ClientForm>
                           <Link href={`/admin/partners/${partner.id}`} className="p-2 text-slate-400 hover:text-brand-blue hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all" title="Edit Partner">
                             <Edit size={18} />
                           </Link>
-                          <form action={deletePartner}>
+                          <ClientForm action={deletePartner} successMessage="Partner Deleted">
                             <input type="hidden" name="id" value={partner.id} />
                             <button type="submit" className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all shrink-0" title="Delete Partner">
                               <Trash2 size={18} />
                             </button>
-                          </form>
+                          </ClientForm>
                         </div>
                       </div>
                     </div>
@@ -89,7 +91,7 @@ export default async function AdminPartnersPage() {
               Add Partner
             </h3>
             
-            <form action={addPartner} className="space-y-4">
+            <ClientForm action={addPartner} successMessage="Partner Added!" className="space-y-4">
               <div>
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Company Name</label>
                 <input type="text" name="name" required className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue" placeholder="e.g. Acme Corp" />
@@ -111,10 +113,10 @@ export default async function AdminPartnersPage() {
                 </div>
               </div>
               
-              <button type="submit" className="w-full py-4 bg-brand-blue text-white font-bold rounded-xl hover:bg-blue-700 transition-colors mt-4 shadow-lg shadow-blue-500/20">
+              <SubmitButton className="w-full">
                 Add Partner
-              </button>
-            </form>
+              </SubmitButton>
+            </ClientForm>
           </div>
         </div>
 

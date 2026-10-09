@@ -72,12 +72,12 @@ export default async function AdminJobsPage(props: { searchParams: Promise<{ pag
                       </p>
                     </div>
                     
-                    <form action={deleteJob}>
+                    <ClientForm action={deleteJob} successMessage="Job Deleted!">
                       <input type="hidden" name="id" value={job.id} />
                       <button type="submit" className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all" title="Delete Job">
                         <Trash2 size={20} />
                       </button>
-                    </form>
+                    </ClientForm>
                   </div>
                 ))
               )}

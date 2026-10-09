@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { MessageSquare, Mail, Phone, Trash2, CheckCircle, Clock } from "lucide-react";
 
 import { markAsRead, deleteMessage } from "@/lib/actions";
+import ClientForm from "@/components/ClientForm";
 
 export const dynamic = "force-dynamic";
 
@@ -54,19 +55,19 @@ export default async function AdminMessagesPage() {
                   
                   <div className="flex gap-2">
                     {!msg.isRead && (
-                      <form action={markAsRead}>
+                      <ClientForm action={markAsRead} successMessage="Marked as Read">
                         <input type="hidden" name="id" value={msg.id} />
                         <button type="submit" className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/30 text-brand-blue rounded-lg text-xs font-bold hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors">
                           <CheckCircle size={14} /> Mark Read
                         </button>
-                      </form>
+                      </ClientForm>
                     )}
-                    <form action={deleteMessage}>
+                    <ClientForm action={deleteMessage} successMessage="Message Deleted!">
                       <input type="hidden" name="id" value={msg.id} />
                       <button type="submit" className="flex items-center gap-2 px-3 py-1.5 bg-red-50 dark:bg-red-900/10 text-red-500 rounded-lg text-xs font-bold hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors" title="Delete Message">
                         <Trash2 size={14} />
                       </button>
-                    </form>
+                    </ClientForm>
                   </div>
                 </div>
                 

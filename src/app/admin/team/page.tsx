@@ -66,29 +66,29 @@ export default async function AdminTeamPage() {
                     </div>
                     
                     <div className="flex flex-col gap-1 items-center justify-center pr-2 border-r border-slate-200 dark:border-slate-800">
-                      <form action={moveMember}>
+                      <ClientForm action={moveMember} resetOnSuccess={false} successMessage="Moved Up">
                         <input type="hidden" name="id" value={member.id} />
                         <input type="hidden" name="direction" value="up" />
                         <button type="submit" disabled={idx === 0} className={`p-1.5 rounded-lg transition-all ${idx === 0 ? 'opacity-30 cursor-not-allowed text-slate-300' : 'text-slate-400 hover:text-brand-blue hover:bg-blue-50 dark:hover:bg-blue-900/20'}`} title="Move Up">
                           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>
                         </button>
-                      </form>
+                      </ClientForm>
                       
-                      <form action={moveMember}>
+                      <ClientForm action={moveMember} resetOnSuccess={false} successMessage="Moved Down">
                         <input type="hidden" name="id" value={member.id} />
                         <input type="hidden" name="direction" value="down" />
                         <button type="submit" disabled={idx === team.length - 1} className={`p-1.5 rounded-lg transition-all ${idx === team.length - 1 ? 'opacity-30 cursor-not-allowed text-slate-300' : 'text-slate-400 hover:text-brand-blue hover:bg-blue-50 dark:hover:bg-blue-900/20'}`} title="Move Down">
                           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6-6"/></svg>
                         </button>
-                      </form>
+                      </ClientForm>
                     </div>
 
-                    <form action={deleteMember} className="pl-2">
+                    <ClientForm action={deleteMember} className="pl-2" successMessage="Team Member Removed!">
                       <input type="hidden" name="id" value={member.id} />
                       <button type="submit" className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all" title="Remove Member">
                         <Trash2 size={18} />
                       </button>
-                    </form>
+                    </ClientForm>
                   </div>
                 ))
               )}

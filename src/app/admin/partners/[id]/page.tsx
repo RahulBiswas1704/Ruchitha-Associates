@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Save } from "lucide-react";
 import RichTextEditor from "@/components/RichTextEditor";
+import ClientForm from "@/components/ClientForm";
+import { SubmitButton } from "@/components/SubmitButton";
 import { updatePartnerContent, deletePartnerPdf } from "@/lib/actions";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +30,7 @@ export default async function AdminEditPartnerPage(props: { params: Promise<{ id
       </div>
 
       <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800">
-        <form action={updatePartnerContent} className="space-y-6">
+        <ClientForm action={updatePartnerContent} resetOnSuccess={false} successMessage="Changes Saved!" className="space-y-6">
           <input type="hidden" name="id" value={partner.id} />
           
           <div>
@@ -70,12 +72,12 @@ export default async function AdminEditPartnerPage(props: { params: Promise<{ id
           </div>
 
           <div className="pt-4 flex justify-end">
-            <button type="submit" className="px-8 py-3 bg-brand-blue text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20 flex items-center gap-2">
+            <SubmitButton>
               <Save size={18} />
               Save Changes
-            </button>
+            </SubmitButton>
           </div>
-        </form>
+        </ClientForm>
       </div>
 
       <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 mt-8">

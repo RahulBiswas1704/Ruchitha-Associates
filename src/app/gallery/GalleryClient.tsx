@@ -27,6 +27,15 @@ export default function GalleryClient({ initialImages }: { initialImages: Galler
     setCurrentPage(1);
   }, [activeCategory]);
 
+  useEffect(() => {
+    if (selectedImage) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [selectedImage]);
+
   const filteredImages = initialImages.filter(
     (img) => activeCategory === "All" || img.category === activeCategory
   );
@@ -174,7 +183,7 @@ export default function GalleryClient({ initialImages }: { initialImages: Galler
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedImage(null)}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm"
+            className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm"
           >
             <button
               onClick={() => setSelectedImage(null)}
