@@ -550,3 +550,31 @@ export async function updatePartnerContent(formData: FormData) {
     console.error("Failed to update partner content", error);
   }
 }
+
+export async function deletePartnerPdf(formData: FormData) {
+  try {
+    const id = formData.get("id") as string;
+    await prisma.partner.update({
+      where: { id },
+      data: { pdfUrl: null }
+    });
+    revalidatePath(`/admin/partners/${id}`);
+    revalidatePath(`/partners`);
+    revalidatePath("/");
+  } catch (error) {
+    console.error("Failed to delete partner pdf", error);
+  }
+}
+
+export async function deleteApplication(id: string) {
+  try {
+    await prisma.jobApplication.delete({
+      where: { id }
+    });
+    revalidatePath("/admin/applications");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Failed to delete application", error);
+    return { error: error.message || "Failed to delete application" };
+  }
+}

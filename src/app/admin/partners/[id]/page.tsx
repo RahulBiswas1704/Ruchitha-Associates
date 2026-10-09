@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Save } from "lucide-react";
 import RichTextEditor from "@/components/RichTextEditor";
-import { updatePartnerContent } from "@/lib/actions";
+import { updatePartnerContent, deletePartnerPdf } from "@/lib/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -53,8 +53,11 @@ export default async function AdminEditPartnerPage(props: { params: Promise<{ id
             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Upload Company PDF / Brochure</label>
             <div className="flex flex-col gap-3">
               {partner.pdfUrl && (
-                <div className="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 text-brand-blue rounded-xl text-sm font-medium border border-blue-100 dark:border-blue-800">
+                <div className="flex justify-between items-center p-3 bg-blue-50 dark:bg-blue-900/20 text-brand-blue rounded-xl text-sm font-medium border border-blue-100 dark:border-blue-800">
                   <a href={partner.pdfUrl} target="_blank" rel="noreferrer" className="underline hover:text-blue-700">View Current PDF</a>
+                  <button type="submit" formAction={deletePartnerPdf} className="text-red-500 hover:text-red-700 font-bold px-3 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 rounded-lg transition-colors text-xs uppercase tracking-wider">
+                    Remove PDF
+                  </button>
                 </div>
               )}
               <input 

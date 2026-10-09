@@ -2,8 +2,8 @@
 
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { useState, useEffect } from "react";
-import { Clock, CheckCircle, XCircle, FileText, User } from "lucide-react";
-import { updateApplicationStatus } from "@/lib/actions";
+import { Clock, CheckCircle, XCircle, FileText, User, Trash2 } from "lucide-react";
+import { updateApplicationStatus, deleteApplication } from "@/lib/actions";
 import { toast } from "sonner";
 
 export type Application = {
@@ -55,6 +55,24 @@ export default function KanbanBoard({ initialApplications }: { initialApplicatio
     
     setColumns(initialCols);
   }, [initialApplications]);
+
+  const handleDeleteApplication = async (appId: string, status: string) => {
+    if (!confirm("Are you sure you want to delete this application? This action cannot be undone.")) return;
+    
+    // Optimistic Update
+    const newColumns = { ...columns };
+    newColumns[status] = newColumns[status].filter(app => app.id !== appId);
+    setColumns(newColumns);
+
+    try {
+      const res = await deleteApplication(appId);
+      if (res.error) throw new Error(res.error);
+      toast.success("Application deleted");
+    } catch (e) {
+      toast.error("Failed to delete application");
+      // Could revert here if needed
+    }
+  };
 
   const onDragEnd = async (result: DropResult) => {
     if (!result.destination) return;
@@ -138,15 +156,27 @@ export default function KanbanBoard({ initialApplications }: { initialApplicatio
                                 <div className="text-[10px] text-slate-400 font-medium">
                                   {new Date(app.createdAt).toLocaleDateString()}
                                 </div>
-                                <a 
-                                  href={app.resumeUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer" 
-                                  className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <FileText size={14} /> Resume
-                                </a>
+                                <div className="flex gap-2">
+                                  <a 
+                                    href={app.resumeUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer" 
+                                    className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <FileText size={14} /> Resume
+                                  </a>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDeleteApplication(app.id, app.status);
+                                    }}
+                                    className="flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors"
+                                    title="Delete Application"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           )}

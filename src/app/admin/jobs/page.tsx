@@ -23,6 +23,11 @@ export default async function AdminJobsPage({ searchParams }: { searchParams: { 
     orderBy: { createdAt: 'desc' }
   });
 
+  const partners = await prisma.partner.findMany({
+    select: { name: true },
+    orderBy: { name: 'asc' }
+  });
+
   return (
     <div className="space-y-8">
       <div>
@@ -113,7 +118,12 @@ export default async function AdminJobsPage({ searchParams }: { searchParams: { 
               
               <div>
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Company / Client</label>
-                <input type="text" name="company" required className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue" placeholder="e.g. Top IT MNC" />
+                <input type="text" name="company" list="companies-list" required className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue" placeholder="e.g. Top IT MNC (Type or select)" />
+                <datalist id="companies-list">
+                  {partners.map((p: any) => (
+                    <option key={p.name} value={p.name} />
+                  ))}
+                </datalist>
               </div>
               
               <div>
@@ -133,14 +143,17 @@ export default async function AdminJobsPage({ searchParams }: { searchParams: { 
                 </div>
                 <div>
                   <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Category</label>
-                  <select name="category" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue appearance-none">
-                    <option value="Information Technology">IT</option>
-                    <option value="Human Resources">HR</option>
-                    <option value="Manufacturing">Manufacturing</option>
-                    <option value="BPO / ITES">BPO / ITES</option>
-                    <option value="Finance">Finance</option>
-                    <option value="Marketing">Marketing</option>
-                  </select>
+                  <input type="text" name="category" list="categories-list" required className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue" placeholder="e.g. Information Technology" />
+                  <datalist id="categories-list">
+                    <option value="Information Technology" />
+                    <option value="Human Resources" />
+                    <option value="Manufacturing" />
+                    <option value="BPO / ITES" />
+                    <option value="Finance" />
+                    <option value="Marketing" />
+                    <option value="Renewable Energy" />
+                    <option value="Healthcare" />
+                  </datalist>
                 </div>
               </div>
 
