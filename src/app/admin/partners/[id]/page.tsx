@@ -7,7 +7,8 @@ import { updatePartnerContent } from "@/lib/actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminEditPartnerPage({ params }: { params: { id: string } }) {
+export default async function AdminEditPartnerPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const partner = await prisma.partner.findUnique({
     where: { id: params.id }
   });

@@ -6,7 +6,8 @@ import { ArrowLeft, ExternalLink, Briefcase } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
-export default async function PartnerPage({ params }: { params: { slug: string } }) {
+export default async function PartnerPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const partner = await prisma.partner.findUnique({
     where: { slug: params.slug }
   });
