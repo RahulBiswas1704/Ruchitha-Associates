@@ -10,14 +10,18 @@ import { createJob, deleteJob } from "@/lib/actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminJobsPage({ searchParams }: { searchParams: { page?: string } }) {
+export default async function AdminJobsPage(props: { searchParams: Promise<{ page?: string; company?: string }> }) {
+  const searchParams = await props.searchParams;
   const page = parseInt(searchParams.page || "1", 10);
   const ITEMS_PER_PAGE = 10;
   
-  const totalJobs = await prisma.job.count();
+  const whereClause = searchParams.company ? { company: searchParams.company } : {};
+  
+  const totalJobs = await prisma.job.count({ where: whereClause });
   const totalPages = Math.ceil(totalJobs / ITEMS_PER_PAGE);
 
   const jobs = await prisma.job.findMany({
+    where: whereClause,
     skip: (page - 1) * ITEMS_PER_PAGE,
     take: ITEMS_PER_PAGE,
     orderBy: { createdAt: 'desc' }
@@ -118,7 +122,7 @@ export default async function AdminJobsPage({ searchParams }: { searchParams: { 
               
               <div>
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Company / Client</label>
-                <input type="text" name="company" list="companies-list" required className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue" placeholder="e.g. Top IT MNC (Type or select)" />
+                <input type="text" name="company" defaultValue={searchParams.company || ""} list="companies-list" required className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue" placeholder="e.g. Top IT MNC (Type or select)" />
                 <datalist id="companies-list">
                   {partners.map((p: any) => (
                     <option key={p.name} value={p.name} />
