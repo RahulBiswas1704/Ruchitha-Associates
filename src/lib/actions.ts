@@ -473,3 +473,65 @@ export async function deleteImage(formData: FormData) {
     console.error("Failed to delete image", error);
   }
 }
+
+// --- PARTNERS ---
+export async function addPartner(formData: FormData) {
+  try {
+    let fileUrl = "";
+    const file = formData.get("file") as File;
+    
+    if (file && file.size > 0) {
+      const files = getFilesAdapter();
+      const uniqueFilename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+      await files.upload(uniqueFilename, file, { contentType: file.type });
+      fileUrl = `${process.env.NEON_ENDPOINT_URL_S3}/images/${uniqueFilename}`;
+    }
+    
+    const name = formData.get("name") as string;
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+    await prisma.partner.create({
+      data: {
+        name,
+        slug,
+        domain: (formData.get("domain") as string) || null,
+        imageUrl: fileUrl || null,
+      }
+    });
+
+    revalidatePath("/admin/partners");
+    revalidatePath("/");
+  } catch (error) {
+    console.error("Failed to add partner", error);
+  }
+}
+
+export async function deletePartner(formData: FormData) {
+  try {
+    const id = formData.get("id") as string;
+    await prisma.partner.delete({ where: { id } });
+    revalidatePath("/admin/partners");
+    revalidatePath("/");
+  } catch (error) {
+    console.error("Failed to delete partner", error);
+  }
+}
+
+export async function updatePartnerContent(formData: FormData) {
+  try {
+    const id = formData.get("id") as string;
+    const content = formData.get("content") as string;
+    const description = formData.get("description") as string;
+
+    await prisma.partner.update({
+      where: { id },
+      data: { content, description }
+    });
+
+    revalidatePath(`/admin/partners/${id}`);
+    revalidatePath(`/partners`);
+    revalidatePath("/"); // in case slug routes are affected
+  } catch (error) {
+    console.error("Failed to update partner content", error);
+  }
+}

@@ -4,8 +4,9 @@ import prisma from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  let associates = [];
+  let associates: any[] = [];
   let content = {};
+  let partners: any[] = [];
   
   try {
     associates = await prisma.associate.findMany({
@@ -13,6 +14,10 @@ export default async function Home() {
         { order: 'asc' },
         { createdAt: 'desc' }
       ]
+    });
+    
+    partners = await prisma.partner.findMany({
+      orderBy: { order: 'asc' }
     });
     
     const contentDocs = await prisma.siteContent.findMany();
@@ -40,5 +45,5 @@ export default async function Home() {
     ] as any;
   }
 
-  return <HomeClient associates={associates} content={content} />;
+  return <HomeClient associates={associates} content={content} partners={partners} />;
 }

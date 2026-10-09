@@ -1,31 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
-const partners = [
-  { name: "RenewSys", domain: "renewsysworld.com", image: "/partners/renewsys.png" },
-  { name: "Frontier Energies", domain: "frontierenergies.com", image: "/partners/frontier_energies.webp" },
-  { name: "Brightgrid", domain: "brightgrid.ai", image: "/partners/brightgrid.png" },
-  { name: "OSI Maritime", domain: "osimaritime.com", image: "/partners/osi_maritime.png" },
-  { name: "Cyient DLM", domain: "cyientdlm.com", image: "/partners/cyient_dlm.png" },
-  { name: "Foxconn", domain: "foxconn.com", image: "/partners/foxconn.svg" },
-  { name: "Schneider Electric", domain: "se.com", image: "/partners/schneider_electric.svg" },
-  { name: "Zap91", domain: "zap91.com", image: "/partners/zap91.png" },
-  { name: "Rapiscan Systems", domain: "rapiscansystems.com", image: "/partners/rapiscan_systems.png" },
-  { name: "Resolute Electronics", domain: "resoluteelectronics.com", image: "/partners/resolute_electronics.png" },
-  { name: "Amber Resojet", domain: "amberresojet.com", image: "/partners/amber_resojet.png" },
-  { name: "Orient Electric", domain: "orientelectric.com", image: "/partners/orient_electric.png" },
-  { name: "Avishkar Industries", domain: "avishkarindustries.com", image: "/partners/avishkar_industries.jpg" },
-  { name: "Radiant Appliances", domain: "radiantappliances.com", image: "/partners/radiant_appliances.png" },
-  { name: "Premier Energies", domain: "premierenergies.com", image: "/partners/premier_energies.png" },
-];
-
-const PartnerLogo = ({ partner }: { partner: typeof partners[0] }) => {
-  return (
+const PartnerLogo = ({ partner }: { partner: any }) => {
+  const inner = (
     <div className="group flex items-center justify-center min-w-[240px] h-28 mx-4 bg-white rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.2)] border border-gray-100 dark:border-white/10 hover:shadow-[0_12px_40px_-4px_rgba(8,31,92,0.15)] dark:hover:shadow-[0_12px_40px_-4px_rgba(255,255,255,0.1)] hover:-translate-y-2 hover:border-brand-blue/30 dark:hover:border-white/30 transition-all duration-500 cursor-pointer p-6">
-      {partner.image ? (
+      {partner.imageUrl || partner.image ? (
         <img 
-          src={partner.image} 
+          src={partner.imageUrl || partner.image} 
           alt={`${partner.name} logo`} 
           className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
           onError={(e) => {
@@ -39,9 +22,19 @@ const PartnerLogo = ({ partner }: { partner: typeof partners[0] }) => {
       )}
     </div>
   );
+  
+  if (partner.slug) {
+    return <Link href={`/partners/${partner.slug}`}>{inner}</Link>;
+  }
+
+  return inner;
 };
 
-export default function PartnersMarquee() {
+export default function PartnersMarquee({ partners = [] }: { partners?: any[] }) {
+  if (!partners || partners.length === 0) {
+    return null;
+  }
+
   const half = Math.ceil(partners.length / 2);
   const row1Partners = partners.slice(0, half);
   const row2Partners = partners.slice(half);
@@ -52,7 +45,7 @@ export default function PartnersMarquee() {
   const row2 = [...row2Partners, ...row2Partners, ...row2Partners, ...row2Partners];
 
   return (
-    <section className="py-16 bg-white dark:bg-slate-950 overflow-hidden relative transition-colors duration-500">
+    <section id="partners" className="py-16 bg-white dark:bg-slate-950 overflow-hidden relative transition-colors duration-500">
       <div className="container mx-auto px-4 text-center mb-12">
         <p className="text-sm font-bold tracking-[0.2em] text-brand-red dark:text-red-400 uppercase mb-4">Trusted Hiring Partners</p>
         <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-4 text-slate-900 dark:text-white">Empowering the Future Workforce</h2>

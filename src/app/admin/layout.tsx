@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Briefcase, Image as ImageIcon, Users, MessageSquare, LogOut, Settings, Layers, Star, Menu, X, Activity, FileText } from "lucide-react";
+import { LayoutDashboard, Briefcase, Image as ImageIcon, Users, MessageSquare, LogOut, Settings, Layers, Star, Menu, X, Activity, FileText, Building2 } from "lucide-react";
 
 const sidebarLinks = [
   { name: "Overview", href: "/admin", icon: LayoutDashboard },
   { name: "Deep Analytics", href: "/admin/analytics", icon: Activity },
   { name: "Manage Services", href: "/admin/services", icon: Layers },
+  { name: "Manage Partners", href: "/admin/partners", icon: Building2 },
   { name: "Manage Jobs", href: "/admin/jobs", icon: Briefcase },
   { name: "Applications", href: "/admin/applications", icon: FileText },
   { name: "Gallery Images", href: "/admin/gallery", icon: ImageIcon },

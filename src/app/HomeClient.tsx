@@ -31,7 +31,7 @@ const AssociateAvatar = ({ associate }: { associate: any }) => {
   );
 };
 
-export default function HomeClient({ associates, content }: { associates: any[], content: any }) {
+export default function HomeClient({ associates, content, partners = [] }: { associates: any[], content: any, partners?: any[] }) {
   const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } }
@@ -138,7 +138,7 @@ export default function HomeClient({ associates, content }: { associates: any[],
         <div className="container mx-auto px-4 md:px-6 mb-6">
           <p className="text-center text-sm font-bold text-slate-400 uppercase tracking-wider">Trusted by 50+ Companies Worldwide</p>
         </div>
-        <PartnersMarquee />
+        <PartnersMarquee partners={partners} />
       </div>
 
       {/* 3. ABOUT / WHY CHOOSE US */}

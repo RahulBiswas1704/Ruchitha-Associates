@@ -6,7 +6,8 @@ import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminGalleryPage({ searchParams }: { searchParams: { page?: string } }) {
+export default async function AdminGalleryPage(props: { searchParams: Promise<{ page?: string }> }) {
+  const searchParams = await props.searchParams;
   const page = parseInt(searchParams.page || "1", 10);
   const ITEMS_PER_PAGE = 12;
   
