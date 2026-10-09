@@ -90,7 +90,7 @@ export default async function PartnerPage({ params }: { params: { slug: string }
                 
                 {jobs.length > 0 ? (
                   <div className="space-y-4">
-                    {jobs.map(job => (
+                    {jobs.map((job: any) => (
                       <div key={job.id} className="block group">
                         <h4 className="font-bold text-gray-900 group-hover:text-brand-blue transition-colors line-clamp-2 mb-1">{job.title}</h4>
                         <p className="text-sm text-gray-500 mb-2 flex items-center gap-2">
