@@ -578,3 +578,41 @@ export async function deleteApplication(id: string) {
     return { error: error.message || "Failed to delete application" };
   }
 }
+
+export async function updatePartnerOrder(id: string, direction: "up" | "down") {
+  try {
+    // Ensure all partners have sequential unique orders
+    const allPartners = await prisma.partner.findMany({ orderBy: [{ order: 'asc' }, { createdAt: 'asc' }] });
+    
+    // Normalize if they are sharing orders (e.g. all 0)
+    for (let i = 0; i < allPartners.length; i++) {
+      if (allPartners[i].order !== i) {
+        await prisma.partner.update({ where: { id: allPartners[i].id }, data: { order: i } });
+        allPartners[i].order = i;
+      }
+    }
+    
+    const currentIndex = allPartners.findIndex((p: any) => p.id === id);
+    if (currentIndex === -1) return;
+
+    if (direction === "up" && currentIndex > 0) {
+      const prev = allPartners[currentIndex - 1];
+      await prisma.$transaction([
+        prisma.partner.update({ where: { id }, data: { order: prev.order } }),
+        prisma.partner.update({ where: { id: prev.id }, data: { order: allPartners[currentIndex].order } })
+      ]);
+    } else if (direction === "down" && currentIndex < allPartners.length - 1) {
+      const next = allPartners[currentIndex + 1];
+      await prisma.$transaction([
+        prisma.partner.update({ where: { id }, data: { order: next.order } }),
+        prisma.partner.update({ where: { id: next.id }, data: { order: allPartners[currentIndex].order } })
+      ]);
+    }
+
+    revalidatePath("/admin/partners");
+    revalidatePath("/partners");
+    revalidatePath("/");
+  } catch (error) {
+    console.error("Failed to reorder partners", error);
+  }
+}
