@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, Maximize2 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
 type GalleryImage = {
@@ -19,9 +20,14 @@ export default function GalleryClient({ initialImages }: { initialImages: Galler
   const [activeCategory, setActiveCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   // Dynamically generate categories from the available images, ensuring "All" is first
   const categories = ["All", ...Array.from(new Set(initialImages.map((img) => img.category)))];
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -176,46 +182,49 @@ export default function GalleryClient({ initialImages }: { initialImages: Galler
       </div>
 
       {/* Lightbox Modal */}
-      <AnimatePresence>
-        {selectedImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedImage(null)}
-            className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm"
-          >
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute top-6 right-6 p-2 text-white hover:text-brand-red bg-white/10 hover:bg-white/20 rounded-full transition-all z-50"
-            >
-              <X size={24} />
-            </button>
+      {mounted && createPortal(
+        <AnimatePresence>
+          {selectedImage && (
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", bounce: 0.3 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative max-w-5xl w-full max-h-[85vh] rounded-3xl overflow-hidden bg-black shadow-2xl border border-white/10"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedImage(null)}
+              className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-sm"
             >
-              <img
-                src={selectedImage.src}
-                alt={selectedImage.alt || "Gallery image expanded"}
-                className="w-full h-full object-contain max-h-[85vh]"
-              />
-              <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/80 to-transparent">
-                <span className="inline-block px-3 py-1 bg-brand-red text-white text-[10px] font-black rounded-full mb-2 uppercase tracking-widest">
-                  {selectedImage.category}
-                </span>
-                {selectedImage.alt && (
-                  <h3 className="text-xl font-bold text-white">{selectedImage.alt}</h3>
-                )}
-              </div>
+              <button
+                onClick={() => setSelectedImage(null)}
+                className="absolute top-6 right-6 p-2 text-white hover:text-brand-red bg-white/10 hover:bg-white/20 rounded-full transition-all z-50"
+              >
+                <X size={24} />
+              </button>
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                transition={{ type: "spring", bounce: 0.3 }}
+                onClick={(e) => e.stopPropagation()}
+                className="relative max-w-5xl w-full max-h-[85vh] rounded-3xl overflow-hidden bg-black shadow-2xl border border-white/10"
+              >
+                <img
+                  src={selectedImage.src}
+                  alt={selectedImage.alt || "Gallery image expanded"}
+                  className="w-full h-full object-contain max-h-[85vh]"
+                />
+                <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/80 to-transparent">
+                  <span className="inline-block px-3 py-1 bg-brand-red text-white text-[10px] font-black rounded-full mb-2 uppercase tracking-widest">
+                    {selectedImage.category}
+                  </span>
+                  {selectedImage.alt && (
+                    <h3 className="text-xl font-bold text-white">{selectedImage.alt}</h3>
+                  )}
+                </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 }

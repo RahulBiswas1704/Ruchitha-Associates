@@ -138,12 +138,20 @@ export default async function AdminJobsPage(props: { searchParams: Promise<{ pag
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Type</label>
-                  <select name="type" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue appearance-none">
-                    <option value="Full-Time">Full-Time</option>
-                    <option value="Part-Time">Part-Time</option>
-                    <option value="Contract">Contract</option>
-                    <option value="Night Shift">Night Shift</option>
-                  </select>
+                  <input 
+                    type="text" 
+                    name="type" 
+                    list="job-types" 
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue" 
+                    placeholder="Select or type..."
+                    defaultValue="Full-Time"
+                  />
+                  <datalist id="job-types">
+                    <option value="Full-Time" />
+                    <option value="Part-Time" />
+                    <option value="Contract" />
+                    <option value="Night Shift" />
+                  </datalist>
                 </div>
                 <div>
                   <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Category</label>

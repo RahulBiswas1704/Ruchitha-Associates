@@ -137,12 +137,20 @@ export default async function AdminGalleryPage(props: { searchParams: Promise<{ 
               
               <div>
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 block">Category</label>
-                <select name="category" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue appearance-none">
-                  <option value="Placement Drives">Placement Drives</option>
-                  <option value="Skill Training">Skill Training (PMKVY)</option>
-                  <option value="Office & Culture">Office & Culture</option>
-                  <option value="Corporate Events">Corporate Events</option>
-                </select>
+                <input 
+                  type="text" 
+                  name="category" 
+                  list="gallery-categories" 
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue" 
+                  placeholder="Select or type a category..."
+                  defaultValue="Placement Drives"
+                />
+                <datalist id="gallery-categories">
+                  <option value="Placement Drives" />
+                  <option value="Skill Training" />
+                  <option value="Office & Culture" />
+                  <option value="Corporate Events" />
+                </datalist>
               </div>
 
               <div>
