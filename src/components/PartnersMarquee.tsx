@@ -17,6 +17,7 @@ const partners = [
   { name: "Orient Electric", domain: "orientelectric.com", image: "/partners/orient_electric.png" },
   { name: "Avishkar Industries", domain: "avishkarindustries.com", image: "/partners/avishkar_industries.jpg" },
   { name: "Radiant Appliances", domain: "radiantappliances.com", image: "/partners/radiant_appliances.png" },
+  { name: "Premier Energies", domain: "premierenergies.com", image: "/partners/premier_energies.png" },
 ];
 
 const PartnerLogo = ({ partner }: { partner: typeof partners[0] }) => {
@@ -41,8 +42,9 @@ const PartnerLogo = ({ partner }: { partner: typeof partners[0] }) => {
 };
 
 export default function PartnersMarquee() {
-  const row1Partners = partners.slice(0, 7);
-  const row2Partners = partners.slice(7, 14);
+  const half = Math.ceil(partners.length / 2);
+  const row1Partners = partners.slice(0, half);
+  const row2Partners = partners.slice(half);
 
   // Quadruple the arrays to ensure they are wide enough for ultra-wide screens
   // The CSS animation translates by -50%, so the first half must identical to the second half.
