@@ -56,7 +56,7 @@ export default async function ServicesPage() {
         title: "Recruitment & Manpower",
         description: "For employers, we act as a reliable partner to source, verify, and deliver skilled manpower. Whether you need bulk hiring for a new project or specialized talent for niche roles, we have a vast database of pre-screened, certified professionals ready to join your team.",
         iconName: "Briefcase",
-        imageUrl: "https://images.unsplash.com/photo-1556761175-5973dc0f32d7?q=80&w=1932&auto=format&fit=crop",
+        imageUrl: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=2070&auto=format&fit=crop",
         features: "Pre-screened and certified candidates, Bulk hiring solutions, Reduced time-to-hire, Customized recruitment drives",
         link: "/employers"
       }
