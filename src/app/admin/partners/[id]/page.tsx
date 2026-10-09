@@ -49,6 +49,23 @@ export default async function AdminEditPartnerPage(props: { params: Promise<{ id
             </div>
           </div>
 
+          <div>
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Upload Company PDF / Brochure</label>
+            <div className="flex flex-col gap-3">
+              {partner.pdfUrl && (
+                <div className="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 text-brand-blue rounded-xl text-sm font-medium border border-blue-100 dark:border-blue-800">
+                  <a href={partner.pdfUrl} target="_blank" rel="noreferrer" className="underline hover:text-blue-700">View Current PDF</a>
+                </div>
+              )}
+              <input 
+                type="file" 
+                name="pdfFile" 
+                accept=".pdf,application/pdf"
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-blue" 
+              />
+            </div>
+          </div>
+
           <div className="pt-4 flex justify-end">
             <button type="submit" className="px-8 py-3 bg-brand-blue text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20 flex items-center gap-2">
               <Save size={18} />
@@ -56,6 +73,22 @@ export default async function AdminEditPartnerPage(props: { params: Promise<{ id
             </button>
           </div>
         </form>
+      </div>
+
+      <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 mt-8">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Partner Job Openings</h3>
+            <p className="text-sm text-slate-500">Manage vacancies for {partner.name}</p>
+          </div>
+          <Link href={`/admin/jobs?company=${encodeURIComponent(partner.name)}`} className="px-4 py-2 bg-brand-red text-white text-sm font-bold rounded-xl hover:bg-red-700 transition-colors">
+            Manage All Jobs
+          </Link>
+        </div>
+
+        <div className="text-sm text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100">
+           To add, edit or delete job openings for this partner, please use the central <Link href="/admin/jobs" className="text-brand-blue font-bold hover:underline">Jobs Management Panel</Link>. When adding a new job, simply enter <strong>{partner.name}</strong> as the Company / Client name to link it to this page.
+        </div>
       </div>
     </div>
   );

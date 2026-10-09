@@ -23,24 +23,20 @@ export default async function PartnerPage(props: { params: Promise<{ slug: strin
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header section */}
-      <section className="bg-brand-blue text-white py-16 md:py-20 relative overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image 
-            src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=1932&auto=format&fit=crop" 
-            alt="Corporate Environment" 
-            fill
-            sizes="100vw"
-            className="object-cover opacity-10"
-          />
-        </div>
+      <section className="bg-gradient-to-br from-slate-900 via-brand-blue to-slate-900 text-white pt-32 pb-16 md:pt-40 md:pb-24 relative overflow-hidden">
+        {/* Decorative Background Elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-blue/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-red/20 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4"></div>
+        
+        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay"></div>
         <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center md:items-start gap-8">
             {/* Logo */}
-            <div className="w-40 h-40 bg-white rounded-3xl p-6 shadow-2xl flex items-center justify-center shrink-0 border-4 border-white/20">
+            <div className="w-32 h-32 md:w-48 md:h-48 bg-white rounded-3xl p-4 md:p-8 shadow-2xl flex items-center justify-center shrink-0 border-4 border-white/10 relative z-20 backdrop-blur-sm bg-white/95">
               {partner.imageUrl ? (
                 <img src={partner.imageUrl} alt={partner.name} className="w-full h-full object-contain" />
               ) : (
-                <span className="font-bold text-brand-blue text-2xl text-center">{partner.name}</span>
+                <span className="font-bold text-brand-blue text-xl md:text-2xl text-center">{partner.name}</span>
               )}
             </div>
             
@@ -49,15 +45,22 @@ export default async function PartnerPage(props: { params: Promise<{ slug: strin
               <Link href="/#partners" className="inline-flex items-center gap-2 text-blue-200 hover:text-white mb-4 transition-colors text-sm font-medium">
                 <ArrowLeft size={16} /> Back to Partners
               </Link>
-              <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">{partner.name}</h1>
+              <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">{partner.name}</h1>
               {partner.description && (
-                <p className="text-lg text-blue-100 max-w-2xl mb-6">{partner.description}</p>
+                <p className="text-lg md:text-xl text-blue-100 max-w-2xl mb-8 leading-relaxed opacity-90">{partner.description}</p>
               )}
-              {partner.domain && (
-                <a href={`https://${partner.domain}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition-colors font-medium">
-                  Visit Website <ExternalLink size={18} />
-                </a>
-              )}
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
+                {partner.domain && (
+                  <a href={partner.domain.startsWith('http') ? partner.domain : `https://${partner.domain}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-brand-blue hover:bg-blue-50 border border-transparent rounded-xl transition-all shadow-lg hover:shadow-xl font-bold">
+                    Visit Website <ExternalLink size={18} />
+                  </a>
+                )}
+                {partner.pdfUrl && (
+                  <a href={partner.pdfUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3.5 bg-brand-red text-white hover:bg-red-600 border border-transparent rounded-xl transition-all shadow-lg hover:shadow-xl font-bold">
+                    Download Brochure
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         </div>

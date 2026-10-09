@@ -522,10 +522,25 @@ export async function updatePartnerContent(formData: FormData) {
     const id = formData.get("id") as string;
     const content = formData.get("content") as string;
     const description = formData.get("description") as string;
+    const file = formData.get("pdfFile") as File;
+    
+    let pdfUrl: string | undefined;
+
+    if (file && file.size > 0) {
+      const files = getFilesAdapter();
+      const uniqueFilename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+      await files.upload(uniqueFilename, file, { contentType: file.type });
+      pdfUrl = `${process.env.NEON_ENDPOINT_URL_S3}/images/${uniqueFilename}`;
+    }
+
+    const data: any = { content, description };
+    if (pdfUrl) {
+      data.pdfUrl = pdfUrl;
+    }
 
     await prisma.partner.update({
       where: { id },
-      data: { content, description }
+      data
     });
 
     revalidatePath(`/admin/partners/${id}`);
